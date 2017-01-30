@@ -9,39 +9,7 @@ var action = "";
 var actStr = '';//yellow submarine';
 
 
-fs.readFile("./random.txt", "utf8", function(err, data){
 
-	console.log(data);
-	var myArr = data.split(",");
-  action = myArr[0];
-	actStr = myArr[1];
-
-console.log(actStr);
-
-
-  console.log(searchSong(''));
-  var myMovie = getmovieInfo('');
-  console.log(myMovie);
-});
-
-var client = new Twitter({
-  consumer_key: apiKey.twitterKeys.consumer_key,
-  consumer_secret: apiKey.twitterKeys.consumer_secret,
-  access_token_key: apiKey.twitterKeys.access_token_key,
-  access_token_secret: apiKey.twitterKeys.access_token_secret
-});
-
-var params = {screen_name: 'coderSun'};
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  if (!error) {
-    console.log(tweets.length);
-    for (var i = 0 ; i < tweets.length; i++ ){
-      console.log(tweets[i].text + " " + tweets[i].created_at);
-    }
-  }
-
-  
-});
 
 
 
@@ -98,3 +66,72 @@ Rotten Tomatoes URL.*/
      }
  });
 }
+
+var inquirer = require("inquirer");
+
+// Create a "Prompt" with a series of questions.
+inquirer.prompt([
+
+  // Here we create a basic text prompt.
+  {
+    type: "input",
+    message: "What is your name?",
+    name: "name"
+  },
+
+
+  // Here we give the user a list to choose from.
+  {
+    type: "list",
+    message: "Which option do you choose?",
+    choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"],
+    name: "pokemon"
+  }
+
+  // Here we ask the user to confirm.
+
+
+// Once we are done with all the questions... "then" we do stuff with the answers
+// In this case, we store all of the answers into a "user" object that inquirer makes for us.
+]).then(function(user) {
+  console.log(user);
+
+  // If we log that user as a JSON, we can see how it looks.
+  console.log(JSON.stringify(user, null, 2));
+
+  // If the user confirms, we displays the user's name and pokemon from the answers.
+  fs.readFile("./random.txt", "utf8", function(err, data){
+
+  console.log(data);
+  var myArr = data.split(",");
+  action = myArr[0];
+  actStr = myArr[1];
+
+console.log(actStr);
+
+
+  console.log(searchSong(''));
+  var myMovie = getmovieInfo('');
+  console.log(myMovie);
+});
+
+var client = new Twitter({
+  consumer_key: apiKey.twitterKeys.consumer_key,
+  consumer_secret: apiKey.twitterKeys.consumer_secret,
+  access_token_key: apiKey.twitterKeys.access_token_key,
+  access_token_secret: apiKey.twitterKeys.access_token_secret
+});
+
+var params = {screen_name: 'coderSun'};
+client.get('statuses/user_timeline', params, function(error, tweets, response) {
+  if (!error) {
+    console.log(tweets.length);
+    for (var i = 0 ; i < tweets.length; i++ ){
+      console.log(tweets[i].text + " " + tweets[i].created_at);
+    }
+  }
+
+  
+});
+
+});
