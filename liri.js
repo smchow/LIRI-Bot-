@@ -43,7 +43,7 @@ Rotten Tomatoes URL.*/
 
 var searchSong = function(actStr, callback){
     console.log('in search song' + actStr + "  ");
-
+    if (actStr =="") {actStr = "The Sign"};
     spotify.search({ type: 'track', query: actStr }, function(err, data) {
     if ( err ) {
         console.log('Error occurred: ' + err);
@@ -97,7 +97,7 @@ inquirer.prompt([
 // Once we are done with all the questions... "then" we do stuff with the answers
 // In this case, we store all of the answers into a "user" object that inquirer makes for us.
 ]).then(function(user) {
-  console.log(user);
+  //console.log(user);
   var action = "";
   var actStr = '';//yellow submarine';
 
