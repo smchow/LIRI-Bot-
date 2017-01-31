@@ -7,8 +7,6 @@ var fs = require("fs");
 
 var logFile = "./log.txt";
 
-
-
 var getmovieInfo = function(movieStr, callback) {
     request("http://www.omdbapi.com/?t=" + movieStr + "&y=&plot=short&r=json&tomatoes=true", function(error, response, body) {
         var movieInfo = '';
@@ -16,8 +14,6 @@ var getmovieInfo = function(movieStr, callback) {
         // If the request is successful (i.e. if the response status code is 200)
         if (!error && response.statusCode === 200) {
 
-            // Parse the body of the site and recover just the imdbRating
-            // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
             movieInfo += "\nThe movie's title is: " + JSON.parse(body).Title;
             movieInfo += "\nThe movie's was made in: " + JSON.parse(body).Year;
             movieInfo += "\nThe movie's rating is: " + JSON.parse(body).imdbRating;
@@ -64,10 +60,6 @@ var searchSong = function(actStr, callback) {
             return;
         }
 
-        /*Artist(s)
-        The song's name
-        A preview link of the song from Spotify
-        The album that the song is from*/
         //for (var i =0 ; i < data.tracks.items.length; i++){
         var songStr = "\n Name of the song: " + data.tracks.items[0].name + "\nName of the album: " 
         + data.tracks.items[0].album.name + "\nPreview URL: " + data.tracks.items[0].preview_url 
@@ -121,8 +113,6 @@ inquirer.prompt([{
     var action = "";
     var actStr = ''; 
     fs.appendFile(logFile, "\n****************New Request ***************\n");
-
-    // If we log that user as a JSON, we can see how it looks.
     //console.log(JSON.stringify(user, null, 2));
     action = user.liriCmd;
     actStr = user.name;
