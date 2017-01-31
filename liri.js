@@ -18,7 +18,7 @@ Rotten Tomatoes Rating.
 Rotten Tomatoes URL.*/
 
 
- var getmovieInfo = function(movieStr){ request("http://www.omdbapi.com/?t="+ movieStr+"&y=&plot=short&r=json&tomatoes=true", function(error, response, body) {
+ var getmovieInfo = function(movieStr,callback){ request("http://www.omdbapi.com/?t="+ movieStr+"&y=&plot=short&r=json&tomatoes=true", function(error, response, body) {
        var movieInfo = '';
        console.log(movieStr);
      // If the request is successful (i.e. if the response status code is 200)
@@ -35,13 +35,13 @@ Rotten Tomatoes URL.*/
          movieInfo += "\nThe movie's actors is: " + JSON.parse(body).Actors;
          movieInfo += "\nThe movie's rotten tomatoes rating is: " + JSON.parse(body).tomatoRating;
          movieInfo += "\nThe movie's rotten tomatoes url is: " + JSON.parse(body).tomatoURL;
-         console.log(movieInfo)
-         return movieInfo;
+         fs.appendFile('./log.txt', movieInfo);
+         callback(movieInfo) ;
      }
  });
 }
 
-var searchSong = function(actStr){
+var searchSong = function(actStr, callback){
     console.log('in search song' + actStr + "  ");
 
     spotify.search({ type: 'track', query: actStr }, function(err, data) {
@@ -59,13 +59,18 @@ var searchSong = function(actStr){
           + data.tracks.items[0].album.name + " " + data.tracks.items[0].preview_url 
           + " " + data.tracks.items[0].artists[0].name ;
           console.log(songStr)
-        return songStr;
+        callback(songStr) ;
     //}
     
 });
 }
 
-var inquirer = require("inquirer");
+
+var displayInfo = function(myStr){
+  console.log( myStr);
+  //return myStr;
+};
+
 
 // Create a "Prompt" with a series of questions.
 inquirer.prompt([
@@ -111,17 +116,22 @@ inquirer.prompt([
     });
   }
   //["", , ""
-  console.log(actStr +  "++actStr **" + action);
+  console.log(actStr +  "** actStr **" + action  +  "** action **");
+  fs.appendFile('./log.txt', "** actStr **" + action  +  "** action **");
   // If the user confirms, we displays the user's name and pokemon from the answers.
   if (action == "spotify-this-song"){
 
-      console.log(searchSong(actStr));
+      searchSong(actStr,displayInfo);
+
   }
 
   if (action == "movie-this"){
-     var myMovie = getmovieInfo('');
-      console.log(myMovie);
+     if (actStr == "") actStr = "Mr+Nobody";
+     getmovieInfo(actStr,displayInfo);
+      //console.log(myMovie);
   }
+
+
 
  
 
