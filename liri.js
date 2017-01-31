@@ -5,17 +5,8 @@ var request = require("request");
 var inquirer = require("inquirer");
 var fs = require("fs");
 
+var logFile = "./log.txt";
 
-
-/*Title of the movie.
-Year the movie came out.
-IMDB Rating of the movie.
-Country where the movie was produced.
-Language of the movie.
-Plot of the movie.
-Actors in the movie.
-Rotten Tomatoes Rating.
-Rotten Tomatoes URL.*/
 
 
  var getmovieInfo = function(movieStr,callback){ request("http://www.omdbapi.com/?t="+ movieStr+"&y=&plot=short&r=json&tomatoes=true", function(error, response, body) {
@@ -35,7 +26,7 @@ Rotten Tomatoes URL.*/
          movieInfo += "\nThe movie's actors is: " + JSON.parse(body).Actors;
          movieInfo += "\nThe movie's rotten tomatoes rating is: " + JSON.parse(body).tomatoRating;
          movieInfo += "\nThe movie's rotten tomatoes url is: " + JSON.parse(body).tomatoURL;
-         fs.appendFile('./log.txt', movieInfo);
+         fs.appendFile(logFile, movieInfo);
          callback(movieInfo) ;
      }
  });
@@ -52,10 +43,10 @@ var getTweetInfo = function(callback){
 var params = {screen_name: 'coderSun'};
 client.get('statuses/user_timeline', params, function(error, tweets, response) {
   if (!error) {
-    console.log(tweets.length);
+    var myTweets = "";
     for (var i = 0 ; i < tweets.length; i++ ){
       console.log(tweets[i].text + " " + tweets[i].created_at);
-      fs.appendFile('./log.txt', tweets[i].text + " " + tweets[i].created_at + "\n");
+      fs.appendFile(logFile, tweets[i].text + " " + tweets[i].created_at + "\n");
     }
   }
   });
@@ -79,13 +70,37 @@ var searchSong = function(actStr, callback){
           + data.tracks.items[0].album.name + " " + data.tracks.items[0].preview_url 
           + " " + data.tracks.items[0].artists[0].name ;
           console.log(songStr)
+        fs.appendFile(logFile, songStr);
         callback(songStr) ;
     //}
     
 });
 }
 
+var actOnRequest = function(actStr, action){
+   fs.appendFile(logFile, actStr +  "** actStr **" + action  +  "** action **");
+  fs.appendFile('./log.txt', actStr + "** actStr **" + action  +  "** action **");
+  // If the user confirms, we displays the user's name and pokemon from the answers.
+  if (action == "spotify-this-song"){
 
+      searchSong(actStr,displayInfo);
+
+  }
+
+  if (action == "movie-this"){
+     if (actStr == "") actStr = "Mr+Nobody";
+     getmovieInfo(actStr,displayInfo);
+      //console.log(myMovie);
+  }
+
+
+
+ 
+
+if (action == "my-tweets"){
+  getTweetInfo( displayInfo);
+}
+}
 var displayInfo = function(myStr){
   console.log( myStr);
   //return myStr;
@@ -120,43 +135,27 @@ inquirer.prompt([
   //console.log(user);
   var action = "";
   var actStr = '';//yellow submarine';
+  fs.appendFile(logFile, "\n****************New Request ***************\n");
 
   // If we log that user as a JSON, we can see how it looks.
-  console.log(JSON.stringify(user, null, 2));
+  //console.log(JSON.stringify(user, null, 2));
   action = user.liriCmd;
     actStr = user.name;
   if (user.liriCmd == "do-what-it-says"){
     fs.readFile("./random.txt", "utf8", function(err, data) {
 
-     console.log(data);
+     //console.log(data);
      var myArr = data.split(",");
      action = myArr[0];
      actStr = myArr[1];
      console.log(actStr);
+     actOnRequest(actStr ,action );
+
     });
+  }else{
+     actOnRequest(actStr ,action );
   }
   //["", , ""
-  console.log(actStr +  "** actStr **" + action  +  "** action **");
-  fs.appendFile('./log.txt', actStr + "** actStr **" + action  +  "** action **");
-  // If the user confirms, we displays the user's name and pokemon from the answers.
-  if (action == "spotify-this-song"){
-
-      searchSong(actStr,displayInfo);
-
-  }
-
-  if (action == "movie-this"){
-     if (actStr == "") actStr = "Mr+Nobody";
-     getmovieInfo(actStr,displayInfo);
-      //console.log(myMovie);
-  }
-
-
-
  
-
-if (action == "my-tweets"){
-  getTweetInfo( displayInfo);
-}
 
 });
