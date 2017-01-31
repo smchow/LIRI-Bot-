@@ -41,6 +41,26 @@ Rotten Tomatoes URL.*/
  });
 }
 
+var getTweetInfo = function(callback){
+  var client = new Twitter({
+  consumer_key: apiKey.twitterKeys.consumer_key,
+  consumer_secret: apiKey.twitterKeys.consumer_secret,
+  access_token_key: apiKey.twitterKeys.access_token_key,
+  access_token_secret: apiKey.twitterKeys.access_token_secret
+});
+
+var params = {screen_name: 'coderSun'};
+client.get('statuses/user_timeline', params, function(error, tweets, response) {
+  if (!error) {
+    console.log(tweets.length);
+    for (var i = 0 ; i < tweets.length; i++ ){
+      console.log(tweets[i].text + " " + tweets[i].created_at);
+      fs.appendFile('./log.txt', tweets[i].text + " " + tweets[i].created_at + "\n");
+    }
+  }
+  });
+}
+
 var searchSong = function(actStr, callback){
     console.log('in search song' + actStr + "  ");
     if (actStr =="") {actStr = "The Sign"};
@@ -117,7 +137,7 @@ inquirer.prompt([
   }
   //["", , ""
   console.log(actStr +  "** actStr **" + action  +  "** action **");
-  fs.appendFile('./log.txt', "** actStr **" + action  +  "** action **");
+  fs.appendFile('./log.txt', actStr + "** actStr **" + action  +  "** action **");
   // If the user confirms, we displays the user's name and pokemon from the answers.
   if (action == "spotify-this-song"){
 
@@ -136,25 +156,7 @@ inquirer.prompt([
  
 
 if (action == "my-tweets"){
-  var client = new Twitter({
-  consumer_key: apiKey.twitterKeys.consumer_key,
-  consumer_secret: apiKey.twitterKeys.consumer_secret,
-  access_token_key: apiKey.twitterKeys.access_token_key,
-  access_token_secret: apiKey.twitterKeys.access_token_secret
-});
-
-var params = {screen_name: 'coderSun'};
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  if (!error) {
-    console.log(tweets.length);
-    for (var i = 0 ; i < tweets.length; i++ ){
-      console.log(tweets[i].text + " " + tweets[i].created_at);
-      fs.appendFile('./log.txt', tweets[i].text + " " + tweets[i].created_at + "\n");
-    }
-  }
-
-  
-});
+  getTweetInfo( displayInfo);
 }
 
 });
